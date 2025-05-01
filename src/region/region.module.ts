@@ -8,5 +8,6 @@ import { Region } from './models/region.model';
   imports: [SequelizeModule.forFeature([Region])],
   controllers: [RegionController],
   providers: [RegionService],
+  exports: [RegionService]
 })
 export class RegionModule {}

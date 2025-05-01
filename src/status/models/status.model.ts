@@ -1,4 +1,5 @@
-import { Column, DataType, Model, Table } from "sequelize-typescript";
+import { Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { Store } from "../../store/models/store.model";
 
 interface IStatusCreateAttr {
   name: string;
@@ -23,4 +24,7 @@ export class Status extends Model<Status, IStatusCreateAttr> {
     type: DataType.STRING
   })
   declare description: string;
+
+    @HasMany(() => Store)
+    store: Store[];
 }

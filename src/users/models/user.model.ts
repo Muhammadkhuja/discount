@@ -1,4 +1,6 @@
-import { Column, DataType, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
+import { Region } from "../../region/models/region.model";
+import { Store } from "../../store/models/store.model";
 
 interface IUserCreateAttr {
   name: string;
@@ -6,6 +8,7 @@ interface IUserCreateAttr {
   email: string;
   hashed_password: string;
   location: string;
+  regionId: number;
 }
 @Table({ tableName: "users" })
 export class User extends Model<User, IUserCreateAttr> {
@@ -34,4 +37,16 @@ export class User extends Model<User, IUserCreateAttr> {
   declare location: string;
   @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4() })
   declare activation_link: string;
+
+  @ForeignKey(() => Region)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  declare regionId: number;
+
+  @BelongsTo(() => Region)
+  region: Region;
+
+  @HasMany(() => Store)
+  store: Store[];
 }

@@ -1,13 +1,6 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  ForeignKey,
-  BelongsTo,
-} from "sequelize-typescript";
-import { User } from "../../users/models/user.model";
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
 import { Region } from "../../region/models/region.model";
+import { User } from "../../users/models/user.model";
 import { District } from "../../district/models/district.model";
 import { Status } from "../../status/models/status.model";
 
@@ -21,8 +14,8 @@ interface IStoreCreateAttr {
   districtId: number;
   address: string;
   statusId: number;
-  open_time?: string;
-  close_time?: string;
+  open_time: string;
+  close_time: string;
   weekday: number;
 }
 
@@ -31,67 +24,68 @@ export class Store extends Model<Store, IStoreCreateAttr> {
   @Column({
     type: DataType.BIGINT,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
   })
   declare id: number;
 
-  @Column({ type: DataType.STRING})
+  @Column({ type: DataType.STRING })
   declare name: string;
 
-  @Column({ type: DataType.STRING})
+  @Column({ type: DataType.STRING })
   declare location: string;
 
-  @Column({ type: DataType.STRING})
+  @Column({ type: DataType.STRING })
   declare phone: string;
 
   @ForeignKey(() => User)
-  @Column({ type: DataType.BIGINT})
-  declare owner_id: number;
+  @Column({
+    type: DataType.INTEGER,
+  })
+  declare ownerId: number;
 
   @BelongsTo(() => User)
-  declare owner: User;
-
-  @Column({ type: DataType.STRING})
-  declare description: string;
+  user: User;
 
   @ForeignKey(() => Region)
-  @Column({ type: DataType.BIGINT})
-  declare region_id: number;
+  @Column({
+    type: DataType.INTEGER,
+  })
+  declare regionId: number;
 
   @BelongsTo(() => Region)
-  declare region: Region;
+  region: Region;
 
   @ForeignKey(() => District)
-  @Column({ type: DataType.BIGINT})
-  declare district_id: number;
+  @Column({
+    type: DataType.INTEGER,
+  })
+  declare districtId: number;
 
   @BelongsTo(() => District)
-  declare district: District;
+  district: District;
 
-  @Column({ type: DataType.TEXT})
+  @Column({ type: DataType.STRING })
   declare address: string;
 
   @ForeignKey(() => Status)
-  @Column({ type: DataType.BIGINT})
-  declare status_id: number;
+  @Column({
+    type: DataType.INTEGER,
+  })
+  declare statusId: number;
 
   @BelongsTo(() => Status)
-  declare status: Status;
+  status: Status;
 
   @Column({
     type: DataType.TIME,
-    allowNull: false,
-    defaultValue: DataType.NOW,
   })
   declare open_time: string;
 
   @Column({
     type: DataType.TIME,
-    allowNull: false,
-    defaultValue: DataType.NOW,
   })
   declare close_time: string;
 
-  @Column({ type: DataType.TINYINT})
+  @Column({ type: DataType.INTEGER })
   declare weekday: number;
 }

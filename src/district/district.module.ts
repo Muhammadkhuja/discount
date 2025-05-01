@@ -8,5 +8,6 @@ import { District } from './models/district.model';
   imports:[SequelizeModule.forFeature([District])],
   controllers: [DistrictController],
   providers: [DistrictService],
+  exports: [DistrictService]
 })
 export class DistrictModule {}

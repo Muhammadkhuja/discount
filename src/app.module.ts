@@ -12,7 +12,11 @@ import { RegionModule } from './region/region.module';
 import { StoreModule } from './store/store.module';
 import { StatusModule } from './status/status.module';
 import { DistrictModule } from './district/district.module';
-
+import { Status } from "./status/models/status.model";
+import { Store } from "./store/models/store.model";
+import { Region } from "./region/models/region.model";
+import { District } from "./district/models/district.model";
+import { Admin } from "./admin/models/admin.model";
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
@@ -26,7 +30,7 @@ import { DistrictModule } from './district/district.module';
       username: process.env.PG_USER,
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DB,
-      models: [User],
+      models: [User, Status, Store, Region, District, Admin],
       autoLoadModels: true,
       sync: { alter: true },
       logging: true,

@@ -5,4 +5,5 @@ export class CreateUserDto {
   password: string;
   confirm_password: string;
   location: string;
+  regionId: number;
 }

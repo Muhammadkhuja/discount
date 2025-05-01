@@ -1,11 +1,6 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  ForeignKey,
-} from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { Region } from "../../region/models/region.model";
+import { Store } from "../../store/models/store.model";
 
 interface IDistrictCreateAttr {
   name: string;
@@ -22,13 +17,19 @@ export class District extends Model<District, IDistrictCreateAttr> {
   declare id: number;
 
   @Column({
-    type: DataType.STRING
+    type: DataType.STRING,
   })
   declare name: string;
 
   @ForeignKey(() => Region)
   @Column({
-    type: DataType.BIGINT
+    type: DataType.INTEGER,
   })
-  declare region_id: number;
+  declare regionId: number;
+
+  @BelongsTo(() => Region)
+  region: Region;
+
+  @HasMany(() => Store)
+  store: Store[];
 }
