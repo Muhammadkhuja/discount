@@ -8,6 +8,10 @@ import { User } from "./users/models/user.model";
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { AdminModule } from './admin/admin.module';
+import { RegionModule } from './region/region.module';
+import { StoreModule } from './store/store.module';
+import { StatusModule } from './status/status.module';
+import { DistrictModule } from './district/district.module';
 
 @Module({
   imports: [
@@ -30,7 +34,11 @@ import { AdminModule } from './admin/admin.module';
     UsersModule,
     AuthModule,
     MailModule,
-    AdminModule],
+    AdminModule,
+    RegionModule,
+    StoreModule,
+    StatusModule,
+    DistrictModule],
   controllers: [],
   providers: [],
 })

@@ -27,7 +27,7 @@ export class UsersService {
       await this.mailService.sendMail(newUser);
     } catch (error) {
       console.log(error);
-      throw new ServiceUnavailableException("Emailga xat yuborishda hatolik");
+      throw new ServiceUnavailableException("jo'natilmid krch Emailga xat");
     }
     return newUser;
   }
@@ -54,6 +54,22 @@ export class UsersService {
     return null
   }
 
+
+//-------------------------------------------------------------------------------------------------
+
+  async updateRefreshToken(id: number, hashed_refresh_token: string){
+    const updateUser = await this.userModel.update(
+      { hashed_refresh_token}, {
+        where: {id}
+      }
+    )
+    return updateUser
+  }
+
+
+//-------------------------------------------------------------------------------------------------
+
+
   findOne(id: number): Promise<User | null> {
     return this.userModel.findByPk(id);
   }
@@ -77,7 +93,7 @@ export class UsersService {
 
   async activateUser(link: string) {
     if (!link) {
-      throw new BadRequestException("Activation link not foundet");
+      throw new BadRequestException("Activation link yo sanga !");
     }
 
     const updayeUser = await this.userModel.update(
@@ -91,11 +107,11 @@ export class UsersService {
       }
     );
     if (!updayeUser[1][0]) {
-      throw new BadRequestException("User already activate");
+      throw new BadRequestException("Sanida ham miyya bor ekan a");
     }
 
     return {
-      message: "User actiavted successfully",
+      message: "User bor ",
       is_active: updayeUser[1][0].is_active,
     };
   }

@@ -1,9 +1,10 @@
-import { Body, Controller, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, HttpCode, Param, ParseIntPipe, Post, Req, Res } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { SingInDto } from "./dto/sing-in.dto";
 import { Request, Response } from "express";
 import { CreateAdminDto } from "../admin/dto/create-admin.dto";
+import { CookieGetter } from "../common/decorators/cookie-getter.decorator";
 
 @Controller("auth")
 export class AuthController {
@@ -28,12 +29,32 @@ export class AuthController {
   ) {
     return this.authService.singOut(req, res);
   }
+
+  @Post("sing-out2")
+  async SingOut(
+    @CookieGetter("refresh_token") refreshToken: string,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    return this.authService.SingOut(refreshToken, res);
+  }
+
+
   @Post("user-refresh")
   async UserrefreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response
   ) {
     return this.authService.UserrefreshToken(req, res);
+  }
+
+  @HttpCode(200)
+  @Post(":id/user-refresh2")
+  async userrefreshToken(
+    @Param("id", ParseIntPipe) id: number,
+    @CookieGetter("refresh_token") refreshToken: string,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    return this.authService.userrefreshToken(id,refreshToken, res);
   }
 
   //-------------------------------------------------------------------------------------------------

@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
@@ -124,6 +125,67 @@ export class AuthService {
     return { messgae: "siz bu yerda yo'qsiz !" };
   }
 
+  async SingOut(refreshToken: string, res: Response) {
+    const userData = await this.jwtService.verify(refreshToken, {
+      secret: process.env.REFRESH_TOKEN_KEY,
+    });
+    if (!userData) {
+      throw new ForbiddenException("User not verified");
+    }
+    const hashed_refresh_token = "";
+    await this.userService.updateRefreshToken(
+      userData.id,
+      hashed_refresh_token
+    );
+
+    res.clearCookie("refresh_token");
+    const response = {
+      messgae: "User yo krch",
+    };
+    return response;
+  }
+
+  async userrefreshToken(userId: number, refresh_token: string, res: Response) {
+    const decodedToken = await this.jwtService.decode(refresh_token);
+    console.log(userId);
+    console.log(decodedToken["id"]);
+
+    if (userId !== decodedToken["id"]) {
+      throw new ForbiddenException("Ruxsat yo diyildi");
+    }
+    const user = await this.userService.findOne(userId);
+
+    if (!user || !user.hashed_refresh_token) {
+      throw new NotFoundException("user not founded");
+    }
+
+    const tokenMatch = await bcrypt.compare(
+      refresh_token,
+      user.hashed_refresh_token
+    );
+
+    if(!tokenMatch){
+      throw new ForbiddenException("Forbidden")
+    }
+
+    const {accessToekn, refreshToken}  = await this.UsergenerateToken(user);
+
+    const hashed_refresh_token = await bcrypt.hash(refreshToken, 7)
+    await this.userService.updateRefreshToken(user.id, hashed_refresh_token)
+
+    res.cookie("refresh_token", refreshToken, {
+      maxAge: Number(process.env.COOKIE_TIME),
+      httpOnly: true
+    })
+
+    const response = {
+      message: "User refreshed",
+      userId: user.id,
+      access_toekn: accessToekn
+    }
+    return response
+  }
+
   async UserrefreshToken(req: Request, res: Response) {
     const refresh_token = req.cookies["refresh_token"];
     if (!refresh_token) {
@@ -213,7 +275,6 @@ export class AuthService {
 
     return { messgae: "siz bu yerda yo'qsiz !" };
   }
-
 
   async AdminrefreshToken(req: Request, res: Response) {
     const refresh_token = req.cookies["refresh_token"];

@@ -1,5 +1,5 @@
 import { NestFactory } from "@nestjs/core";
-import { ValidationPipe } from "@nestjs/common";
+import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
 import * as cookieParser from "cookie-parser";
@@ -21,6 +21,26 @@ async function start() {
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("docs", app, document);
+
+    app.enableCors({
+      origin: (origin, callback) => {
+        const allowedOrigins = [
+          "http://localhost:3002",
+          "http://localhost:8000",
+          "http://skidkachi.uz",
+          "http://api.skidkachi.uz",
+          "http://skidkachi.vercel.app",
+        ];
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new BadRequestException("Not allowed by CORS"));
+        }
+      },
+      methods: "GET, HEAD, PUT,PATCH,POST,DELETE",
+      credentials: true, //cookie be header
+    });
+
     app.use(cookieParser());
     await app.listen(PORT, () => {
       console.log(`Server start at: http://localhost${PORT}`);
