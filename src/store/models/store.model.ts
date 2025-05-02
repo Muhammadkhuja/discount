@@ -1,8 +1,10 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { Region } from "../../region/models/region.model";
 import { User } from "../../users/models/user.model";
 import { District } from "../../district/models/district.model";
 import { Status } from "../../status/models/status.model";
+import { Discount } from "../../discounts/models/discount.model";
+import { StoreSocialLink } from "../../store_social_links/models/store_social_link.model";
 
 interface IStoreCreateAttr {
   name: string;
@@ -88,4 +90,10 @@ export class Store extends Model<Store, IStoreCreateAttr> {
 
   @Column({ type: DataType.INTEGER })
   declare weekday: number;
+
+  @HasMany(() => Discount)
+  discount: Discount[];
+
+  @HasMany(() => StoreSocialLink)
+  storeSLink: StoreSocialLink[];
 }
