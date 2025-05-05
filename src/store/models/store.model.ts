@@ -1,10 +1,11 @@
-import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
+import { BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { Region } from "../../region/models/region.model";
 import { User } from "../../users/models/user.model";
 import { District } from "../../district/models/district.model";
 import { Status } from "../../status/models/status.model";
 import { Discount } from "../../discounts/models/discount.model";
 import { StoreSocialLink } from "../../store_social_links/models/store_social_link.model";
+import { StoreSubscribe } from "../../store_subscribes/models/store_subscribe.model";
 
 interface IStoreCreateAttr {
   name: string;
@@ -96,4 +97,8 @@ export class Store extends Model<Store, IStoreCreateAttr> {
 
   @HasMany(() => StoreSocialLink)
   storeSLink: StoreSocialLink[];
+
+
+    @BelongsToMany(() => User, ()=> StoreSubscribe)
+    ssbe: StoreSubscribe[];
 }

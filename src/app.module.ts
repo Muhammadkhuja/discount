@@ -31,6 +31,15 @@ import { Type } from "./type/models/type.model";
 import { SocialMediaType } from "./social_media_type/models/social_media_type.model";
 import { StoreSocialLink } from "./store_social_links/models/store_social_link.model";
 import { Bot } from "./bots/model/bot.model";
+import { MediaModule } from './media/media.module';
+import { AdsModule } from './ads/ads.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { FavouritesModule } from './favourites/favourites.module';
+import { StoreSubscribesModule } from './store_subscribes/store_subscribes.module';
+import { Media } from "./media/models/media.model";
+import { StoreSubscribe } from "./store_subscribes/models/store_subscribe.model";
+import { Favourite } from "./favourites/models/favourite.model";
+import { Review } from "./reviews/models/review.model";
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
@@ -66,7 +75,12 @@ import { Bot } from "./bots/model/bot.model";
         Type,
         SocialMediaType,
         StoreSocialLink,
-        Bot
+        Bot,
+        Media,
+        StoreSubscribe,
+        Favourite,
+        Review
+
       ],
       autoLoadModels: true,
       sync: { alter: true },
@@ -86,6 +100,11 @@ import { Bot } from "./bots/model/bot.model";
     SocialMediaTypeModule,
     StoreSocialLinksModule,
     DiscountsModule,
+    MediaModule,
+    AdsModule,
+    ReviewsModule,
+    FavouritesModule,
+    StoreSubscribesModule,
   ],
   controllers: [],
   providers: [],

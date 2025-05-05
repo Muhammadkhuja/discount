@@ -1,6 +1,19 @@
-import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
+import {
+  BelongsTo,
+  BelongsToMany,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Model,
+  Table,
+} from "sequelize-typescript";
 import { Region } from "../../region/models/region.model";
 import { Store } from "../../store/models/store.model";
+import { StoreSubscribe } from "../../store_subscribes/models/store_subscribe.model";
+import { Discount } from "../../discounts/models/discount.model";
+import { Favourite } from "../../favourites/models/favourite.model";
+import { Review } from "../../reviews/models/review.model";
 
 interface IUserCreateAttr {
   name: string;
@@ -49,4 +62,13 @@ export class User extends Model<User, IUserCreateAttr> {
 
   @HasMany(() => Store)
   store: Store[];
+
+  @BelongsToMany(() => Discount, () => Favourite)
+  fav: Favourite[];
+
+  @BelongsToMany(() => Store, () => StoreSubscribe)
+  ssbe: StoreSubscribe[];
+
+  @HasMany(() => Review)
+  review: Review[];
 }

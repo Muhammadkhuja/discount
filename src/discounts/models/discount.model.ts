@@ -1,14 +1,19 @@
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from "sequelize-typescript";
 import { Store } from "../../store/models/store.model";
 import { Category } from "../../category/models/category.model";
 import { SocialMediaType } from "../../social_media_type/models/social_media_type.model";
+import { User } from "../../users/models/user.model";
+import { Favourite } from "../../favourites/models/favourite.model";
+import { Review } from "../../reviews/models/review.model";
 
 interface IDiscountCreateAttr {
   storeId: number;
@@ -88,7 +93,7 @@ export class Discount extends Model<Discount, IDiscountCreateAttr> {
 
   @Column({
     type: DataType.BOOLEAN,
-    defaultValue: true
+    defaultValue: true,
   })
   declare is_active: boolean;
 
@@ -100,4 +105,10 @@ export class Discount extends Model<Discount, IDiscountCreateAttr> {
 
   @BelongsTo(() => SocialMediaType)
   type: SocialMediaType;
+
+  @BelongsToMany(() => User, () => Favourite)
+  fav: Favourite[];
+
+  @HasMany(() => Review)
+  review: Review[];
 }
