@@ -1,4 +1,9 @@
-import { BadGatewayException, BadRequestException, Injectable, ServiceUnavailableException } from "@nestjs/common";
+import {
+  BadGatewayException,
+  BadRequestException,
+  Injectable,
+  ServiceUnavailableException,
+} from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectModel } from "@nestjs/sequelize";
@@ -6,12 +11,17 @@ import { User } from "./models/user.model";
 
 import * as bcrypt from "bcrypt";
 import { MailService } from "../mail/mail.service";
+import { PhoneUserDto } from "./dto/phone-user.dto";
+
+import * as otpGeneretor from "otp-generator";
+import { BotsService } from "../bots/bots.service";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private readonly userModel: typeof User,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
+    private readonly botService: BotsService
   ) {}
   async create(createUserDto: CreateUserDto) {
     const { password, confirm_password } = createUserDto;
@@ -41,34 +51,32 @@ export class UsersService {
   }
 
   async findByRefresh(refresh_token: string) {
-    const users = await this.userModel.findAll()
+    const users = await this.userModel.findAll();
 
     for (const user of users) {
       const match = await bcrypt.compare(
         refresh_token,
         user.hashed_refresh_token
-      )
-      if (match) return user
+      );
+      if (match) return user;
     }
 
-    return null
+    return null;
   }
 
+  //-------------------------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------------------------
-
-  async updateRefreshToken(id: number, hashed_refresh_token: string){
+  async updateRefreshToken(id: number, hashed_refresh_token: string) {
     const updateUser = await this.userModel.update(
-      { hashed_refresh_token}, {
-        where: {id}
+      { hashed_refresh_token },
+      {
+        where: { id },
       }
-    )
-    return updateUser
+    );
+    return updateUser;
   }
 
-
-//-------------------------------------------------------------------------------------------------
-
+  //-------------------------------------------------------------------------------------------------
 
   findOne(id: number): Promise<User | null> {
     return this.userModel.findByPk(id);
@@ -116,5 +124,22 @@ export class UsersService {
     };
   }
 
+  async newOtp(phoneUserDto: PhoneUserDto) {
+    const phone_number = phoneUserDto.phone;
 
+    const otp = otpGeneretor.generate(4, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    //-----------------------------------------------BOT-----------------------------------------------
+    const isSend = await this.botService.sendOtp(phone_number, otp);
+    if(!isSend){
+      throw new BadRequestException("Avval ro'yxatdan o'ting")
+    }
+    return {message: "Otp bo'tga yuborildi"}
+    //-----------------------------------------------SMS-----------------------------------------------
+    //----------------------------------------------EMAIL----------------------------------------------
+  }
 }

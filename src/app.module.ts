@@ -30,6 +30,7 @@ import { Category } from "./category/models/category.model";
 import { Type } from "./type/models/type.model";
 import { SocialMediaType } from "./social_media_type/models/social_media_type.model";
 import { StoreSocialLink } from "./store_social_links/models/store_social_link.model";
+import { Bot } from "./bots/model/bot.model";
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
@@ -65,6 +66,7 @@ import { StoreSocialLink } from "./store_social_links/models/store_social_link.m
         Type,
         SocialMediaType,
         StoreSocialLink,
+        Bot
       ],
       autoLoadModels: true,
       sync: { alter: true },
