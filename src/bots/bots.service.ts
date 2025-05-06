@@ -84,7 +84,11 @@ export class BotsService {
             .resize(),
         });
       } else if ("contact" in ctx.message!) {
-        user.phone_number = ctx.message.contact.phone_number;
+        let phone = ctx.message.contact.phone_number;
+        if (phone[0] != "+") {
+          phone = "+" + phone;
+        }
+        user.phone_number = phone;
         user.status = true;
         await user.save();
         await ctx.replyWithHTML(`Tabrik ro'yxatdan o'tdiz`, {
@@ -126,15 +130,33 @@ export class BotsService {
 
   async sendOtp(phone_number: string, OTP: string) {
     try {
-      const user = await this.botModel.findOne({ where: { phone_number }});
+      const user = await this.botModel.findOne({ where: { phone_number } });
       if (!user || !user.status) {
-        return false
+        return false;
       }
-      await this.bot.telegram.sendMessage(user.user_id, `Verif code: ${OTP}`)
-      return true
-
+      await this.bot.telegram.sendMessage(user.user_id, `Verif code: ${OTP}`);
+      return true;
     } catch (error) {
       console.log(`Error on sendOtp`, error);
+    }
+  }
+
+  async OnText(ctx: Context) {
+    try {
+      const user_id = ctx.from?.id;
+      const user = await this.botModel.findByPk(user_id);
+      if (!user) {
+        await ctx.replyWithHTML(
+          `bos <b>start</b> ni e `,
+          {
+            ...Markup.keyboard([["/start"]])
+              .oneTime()
+              .resize(),
+          }
+        );
+      }
+    } catch (error) {
+      console.log(`Error on Contact`, error);
     }
   }
 }

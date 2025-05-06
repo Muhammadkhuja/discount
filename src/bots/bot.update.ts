@@ -12,11 +12,11 @@ import { BotsService } from "./bots.service";
 
 @Update()
 export class BotUpadte {
-  constructor(private readonly botService: BotsService){}
+  constructor(private readonly botService: BotsService) {}
   @Start()
   async onStart(@Ctx() ctx: Context) {
-    return this.botService.start(ctx)
-    }
+    return this.botService.start(ctx);
+  }
 
   // @On("photo")
   // async OnPhoto(@Ctx() ctx: Context) {
@@ -63,13 +63,12 @@ export class BotUpadte {
 
   @On("contact")
   async OnContact(@Ctx() ctx: Context) {
-    return this.botService.onContact(ctx)
+    return this.botService.onContact(ctx);
   }
 
-
   @Command("stop")
-  async OnStop(@Ctx() ctx: Context){
-    return this.botService.onStop(ctx)
+  async OnStop(@Ctx() ctx: Context) {
+    return this.botService.onStop(ctx);
   }
 
   // @On("location")
@@ -180,17 +179,10 @@ export class BotUpadte {
   //   await ctx.reply("Main Button 1 bosildi");
   // }
 
-  // @On("text")
-  // async OnText(@Ctx() ctx: Context) {
-  //   console.log(ctx);
-  //   if ("text" in ctx.message!) {
-  //     if (ctx.message.text == "hi") {
-  //       await ctx.replyWithHTML("<b>Hello</b>");
-  //     } else {
-  //       await ctx.replyWithHTML(ctx.message.text);
-  //     }
-  //   }
-  // }
+  @On("text")
+  async OnText(@Ctx() ctx: Context) {
+    return this.botService.OnText(ctx);
+  }
   @On("message")
   async OnMessage(@Ctx() ctx: Context) {
     console.log(ctx.botInfo);

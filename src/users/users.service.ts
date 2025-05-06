@@ -16,10 +16,18 @@ import { PhoneUserDto } from "./dto/phone-user.dto";
 import * as otpGeneretor from "otp-generator";
 import { BotsService } from "../bots/bots.service";
 
+import * as uuid from "uuid";
+import { Otp } from "./models/otp.model";
+import { AddMinutesToDate } from "../common/helpers/addMinutes";
+import { decode, encode } from "../common/helpers/crypto";
+import { VerifyOtpDto } from "./dto/verify-otp.dto";
+import { where } from "sequelize";
+
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private readonly userModel: typeof User,
+    @InjectModel(Otp) private readonly otpModel: typeof Otp,
     private readonly mailService: MailService,
     private readonly botService: BotsService
   ) {}
@@ -124,6 +132,52 @@ export class UsersService {
     };
   }
 
+  async verifyOtp(verifyOtpDto: VerifyOtpDto) {
+    const { varification_key, phone: phone_number, otp } = verifyOtpDto;
+
+    const currentDate = new Date();
+    const decodedDate = await decode(varification_key);
+    const details = JSON.parse(decodedDate);
+    if (details.phone_number != phone_number) {
+      throw new BadRequestException("telefonga yubodi");
+    }
+    const reusltOtp = await this.otpModel.findByPk(details.otp_id);
+
+    if (reusltOtp == null) {
+      throw new BadRequestException("Bunday Otp yo'q");
+    }
+    if (reusltOtp.verified) {
+      throw new BadRequestException("Bu Otp avval tekshirilgan");
+    }
+    if (reusltOtp.expiration_time < currentDate) {
+      throw new BadRequestException("Vaqt bo'tam vaqt");
+    }
+    if (reusltOtp.otp != otp) {
+      throw new BadRequestException("Mos emas de");
+    }
+
+    const user = await this.userModel.update(
+      {
+        is_owner: true,
+      },
+      {
+        where: { phone: phone_number },
+        returning: true,
+      }
+    );
+    if (!user[1][0]) {
+      throw new BadRequestException("Bunday raqamli foydalanuvchi yo'q");
+    }
+
+    await this.otpModel.update(
+      { verified: true },
+      { where: { id: details.otp_id } }
+    );
+    return {
+      message: "Tabriklayman siz ovner bo'ldiz",
+    };
+  }
+
   async newOtp(phoneUserDto: PhoneUserDto) {
     const phone_number = phoneUserDto.phone;
 
@@ -135,11 +189,32 @@ export class UsersService {
 
     //-----------------------------------------------BOT-----------------------------------------------
     const isSend = await this.botService.sendOtp(phone_number, otp);
-    if(!isSend){
-      throw new BadRequestException("Avval ro'yxatdan o'ting")
+    if (!isSend) {
+      throw new BadRequestException("Avval ro'yxatdan o'ting");
     }
-    return {message: "Otp bo'tga yuborildi"}
+    // return {message: "Otp bo'tga yuborildi"}
     //-----------------------------------------------SMS-----------------------------------------------
+
     //----------------------------------------------EMAIL----------------------------------------------
+    const now = new Date();
+    const expiration_time = AddMinutesToDate(now, 5);
+    await this.otpModel.destroy({ where: { phone_number } });
+    const newOtpData = await this.otpModel.create({
+      id: uuid.v4(),
+      otp,
+      phone_number,
+      expiration_time,
+    });
+
+    const details = {
+      timestamp: now,
+      phone_number,
+      otp_id: newOtpData.id,
+    };
+    const encodedData = await encode(JSON.stringify(details));
+    return {
+      message: "Otp botga jonatildi",
+      verification_key: encodedData,
+    };
   }
 }

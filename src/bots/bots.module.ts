@@ -3,11 +3,14 @@ import { BotsService } from "./bots.service";
 import { BotUpadte } from "./bot.update";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { Bot } from "./model/bot.model";
+import { Address } from "./model/address.model";
+import { AddressUpadte } from "./address/bot.address.update";
+import { AddressService } from "./address/bots.address.service";
 
 @Module({
-  imports: [SequelizeModule.forFeature([Bot])],
+  imports: [SequelizeModule.forFeature([Bot, Address])],
   controllers: [],
-  providers: [BotsService, BotUpadte],
+  providers: [BotsService,  AddressUpadte,BotUpadte, AddressService],
   exports: [BotsService],
 })
 export class BotsModule {}

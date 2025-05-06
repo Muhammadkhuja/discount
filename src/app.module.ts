@@ -40,6 +40,8 @@ import { Media } from "./media/models/media.model";
 import { StoreSubscribe } from "./store_subscribes/models/store_subscribe.model";
 import { Favourite } from "./favourites/models/favourite.model";
 import { Review } from "./reviews/models/review.model";
+import { Otp } from "./users/models/otp.model";
+import { Address } from "./bots/model/address.model";
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
@@ -79,7 +81,9 @@ import { Review } from "./reviews/models/review.model";
         Media,
         StoreSubscribe,
         Favourite,
-        Review
+        Review,
+        Otp,
+        Address
 
       ],
       autoLoadModels: true,
