@@ -10,7 +10,7 @@ import { AddressService } from "./address/bots.address.service";
 @Module({
   imports: [SequelizeModule.forFeature([Bot, Address])],
   controllers: [],
-  providers: [BotsService,  AddressUpadte,BotUpadte, AddressService],
+  providers: [BotsService,AddressService,  AddressUpadte, BotUpadte ],
   exports: [BotsService],
 })
 export class BotsModule {}

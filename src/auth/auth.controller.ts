@@ -10,10 +10,6 @@ import { CookieGetter } from "../common/decorators/cookie-getter.decorator";
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post("sing-up")
-  async singUp(@Body() createUserDto: CreateUserDto) {
-    return this.authService.singUp(createUserDto);
-  }
 
   @Post("sing-in")
   async singIn(

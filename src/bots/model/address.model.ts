@@ -1,7 +1,7 @@
 import { Column, DataType, Model, Table } from "sequelize-typescript";
 
 interface IAddressCreation {
-  user_id: number;
+  user_id: number | undefined;
   last_state: string
 }
 
@@ -17,35 +17,30 @@ export class Address extends Model<Address, IAddressCreation> {
 
   @Column({
     type: DataType.STRING(50),
-    allowNull: false,
   })
   declare name: string;
 
 
   @Column({
     type: DataType.STRING(50),
-    allowNull: false,
   })
   declare address: string;
 
 
   @Column({
     type: DataType.BIGINT,
-    allowNull: false,
   })
-  declare user_id: string;
+  declare user_id: number;
 
 
   @Column({
     type: DataType.STRING(50),
-    allowNull: false,
   })
   declare location: string;
 
 
   @Column({
     type: DataType.STRING(50),
-    allowNull: false,
   })
   declare last_state: string;
 }

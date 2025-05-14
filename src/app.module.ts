@@ -88,7 +88,7 @@ import { Address } from "./bots/model/address.model";
       ],
       autoLoadModels: true,
       sync: { alter: true },
-      logging: true,
+      logging: false,
     }),
     UsersModule,
     AuthModule,

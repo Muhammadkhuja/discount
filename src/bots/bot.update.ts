@@ -9,13 +9,44 @@ import {
 } from "nestjs-telegraf";
 import { Context, Markup } from "telegraf";
 import { BotsService } from "./bots.service";
+import { UseFilters, UseGuards } from "@nestjs/common";
+import { TelegrafExeptionFilter } from "../common/filtres/telegraf-exeption.filter";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @Update()
 export class BotUpadte {
   constructor(private readonly botService: BotsService) {}
+
+  @UseFilters(TelegrafExeptionFilter)
+  @UseGuards(AdminGuard)
+  @Command("admin")
+  async onAdminCommand(@Ctx() ctx: Context) {
+    await this.botService.admin_menu(ctx, `Xush kelibsiz, ADMIN `);
+  }
+
   @Start()
   async onStart(@Ctx() ctx: Context) {
     return this.botService.start(ctx);
+  }
+
+  @On("contact")
+  async OnContact(@Ctx() ctx: Context) {
+    return this.botService.onContact(ctx);
+  }
+
+  @Command("stop")
+  async OnStop(@Ctx() ctx: Context) {
+    return this.botService.onStop(ctx);
+  }
+
+  @On("text")
+  async OnText(@Ctx() ctx: Context) {
+    return this.botService.OnText(ctx);
+  }
+
+  @On("location")
+  async Onlocation(@Ctx() ctx: Context) {
+    return this.botService.onLocation(ctx);
   }
 
   // @On("photo")
@@ -60,16 +91,6 @@ export class BotUpadte {
   //     await ctx.reply(ctx.message.document.file_name!);
   //   }
   // }
-
-  @On("contact")
-  async OnContact(@Ctx() ctx: Context) {
-    return this.botService.onContact(ctx);
-  }
-
-  @Command("stop")
-  async OnStop(@Ctx() ctx: Context) {
-    return this.botService.onStop(ctx);
-  }
 
   // @On("location")
   // async Onlocation(@Ctx() ctx: Context) {
@@ -179,10 +200,6 @@ export class BotUpadte {
   //   await ctx.reply("Main Button 1 bosildi");
   // }
 
-  @On("text")
-  async OnText(@Ctx() ctx: Context) {
-    return this.botService.OnText(ctx);
-  }
   @On("message")
   async OnMessage(@Ctx() ctx: Context) {
     console.log(ctx.botInfo);

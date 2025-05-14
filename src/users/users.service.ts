@@ -21,7 +21,6 @@ import { Otp } from "./models/otp.model";
 import { AddMinutesToDate } from "../common/helpers/addMinutes";
 import { decode, encode } from "../common/helpers/crypto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
-import { where } from "sequelize";
 
 @Injectable()
 export class UsersService {
