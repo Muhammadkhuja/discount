@@ -42,6 +42,7 @@ import { Favourite } from "./favourites/models/favourite.model";
 import { Review } from "./reviews/models/review.model";
 import { Otp } from "./users/models/otp.model";
 import { Address } from "./bots/model/address.model";
+import { SmsModule } from './sms/sms.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
@@ -109,6 +110,7 @@ import { Address } from "./bots/model/address.model";
     ReviewsModule,
     FavouritesModule,
     StoreSubscribesModule,
+    SmsModule,
   ],
   controllers: [],
   providers: [],

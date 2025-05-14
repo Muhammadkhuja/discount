@@ -21,6 +21,7 @@ import { Otp } from "./models/otp.model";
 import { AddMinutesToDate } from "../common/helpers/addMinutes";
 import { decode, encode } from "../common/helpers/crypto";
 import { VerifyOtpDto } from "./dto/verify-otp.dto";
+import { SmsService } from "../sms/sms.service";
 
 @Injectable()
 export class UsersService {
@@ -28,7 +29,8 @@ export class UsersService {
     @InjectModel(User) private readonly userModel: typeof User,
     @InjectModel(Otp) private readonly otpModel: typeof Otp,
     private readonly mailService: MailService,
-    private readonly botService: BotsService
+    private readonly botService: BotsService,
+    private readonly smsService: SmsService
   ) {}
   async create(createUserDto: CreateUserDto) {
     const { password, confirm_password } = createUserDto;
@@ -194,6 +196,14 @@ export class UsersService {
     // return {message: "Otp bo'tga yuborildi"}
     //-----------------------------------------------SMS-----------------------------------------------
 
+    const response = await this.smsService.sendSMS(phone_number, otp);
+    if (response.status != 200) {
+      throw new ServiceUnavailableException("OTP yuborishda xatolik");
+    }
+    const message = 
+    `OTP code has been send to **** ` +
+    phone_number.slice(phone_number.length - 4)
+
     //----------------------------------------------EMAIL----------------------------------------------
     const now = new Date();
     const expiration_time = AddMinutesToDate(now, 5);
@@ -214,6 +224,7 @@ export class UsersService {
     return {
       message: "Otp botga jonatildi",
       verification_key: encodedData,
+      messageSMS: message
     };
   }
 }
